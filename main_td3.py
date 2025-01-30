@@ -3,17 +3,21 @@ import numpy as np
 from RLlib.td3_agent import DeterministicActor, TwinCritic
 from src.environment import DashCamEnv
 from src.DADALoader import DADALoader
-from RLlib.replay_buffer import ReplayBuffer  # Reuse existing buffer
+from RLlib.replay_buffer import ReplayMemoryGPU  # Reuse existing buffer
 from trainers.td3_trainer import TD3Trainer
+import yaml
+
+with open("cfgs/td3_mlnet.yml", "r") as f:
+    cfg = yaml.safe_load(f)
 
 trainer = TD3Trainer(
     actor=actor, 
     critic=critic,
-    gamma=cfg.gamma,
-    tau=cfg.tau,
-    policy_noise=0.2,
-    noise_clip=0.5,
-    policy_freq=2
+    gamma=cfg["gamma"],
+    tau=cfg["tau"],
+    policy_noise=cfg["policy_noise"],
+    noise_clip=cfg["noise_clip"],
+    policy_freq=cfg["policy_freq"]
 )
 
 def train_td3(cfg):
@@ -27,7 +31,8 @@ def train_td3(cfg):
     action_dim = 3   # [accident_score, x, y]
     actor = DeterministicActor(state_dim, action_dim).to(device)
     critic = TwinCritic(state_dim, action_dim).to(device)
-    replay_buffer = ReplayBuffer(cfg.buffer_size)
+    #replay_buffer = ReplayMemory(cfg.buffer_size)
+    replay_buffer = ReplayMemoryGPU(cfg, device=device)
     
     # Trainer (from previous TD3Trainer class)
     trainer = TD3Trainer(actor, critic, gamma=cfg.gamma, tau=cfg.tau,
@@ -42,7 +47,8 @@ def train_td3(cfg):
             # Select action with exploration noise
             with torch.no_grad():
                 action = actor(state)
-                noise = torch.randn_like(action) * cfg.exploration_noise
+                #noise = torch.randn_like(action) * cfg.exploration_noise
+                noise = torch.randn_like(action) * cfg["exploration_noise"]
                 action = (action + noise).clamp(-1, 1)
             
             # Step environment
@@ -79,5 +85,5 @@ def test_performance(actor, env, device):
     print(f"Test Reward: {total_reward:.2f}")
 
 if __name__ == "__main__":
-    from cfgs.td3_mlnet import cfg  # Your TD3 config file
+    #from cfgs.td3_mlnet import cfg  # Your TD3 config file
     train_td3(cfg)

@@ -5,3 +5,6 @@ critic_lr: 1e-3      # Critic learning rate
 policy_noise: 0.2    # Target action noise
 noise_clip: 0.5      # Noise clipping range
 policy_freq: 2       # Delayed policy update frequency
+buffer_size: 1000000  # Default size for TD3
+exploration_noise: 0.1  # Standard exploration noise for TD3
+replay_size: 1000000  # Needed for GPU replay buffer
