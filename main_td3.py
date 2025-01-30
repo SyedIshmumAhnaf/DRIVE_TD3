@@ -10,16 +10,6 @@ import yaml
 with open("cfgs/td3_mlnet.yml", "r") as f:
     cfg = yaml.safe_load(f)
 
-trainer = TD3Trainer(
-    actor=actor, 
-    critic=critic,
-    gamma=cfg["gamma"],
-    tau=cfg["tau"],
-    policy_noise=cfg["policy_noise"],
-    noise_clip=cfg["noise_clip"],
-    policy_freq=cfg["policy_freq"]
-)
-
 def train_td3(cfg):
     # Initialize environment and dataset
     env = DashCamEnv(cfg)
@@ -33,6 +23,16 @@ def train_td3(cfg):
     critic = TwinCritic(state_dim, action_dim).to(device)
     #replay_buffer = ReplayMemory(cfg.buffer_size)
     replay_buffer = ReplayMemoryGPU(cfg, device=device)
+
+    trainer = TD3Trainer(
+    actor=actor, 
+    critic=critic,
+    gamma=cfg["gamma"],
+    tau=cfg["tau"],
+    policy_noise=cfg["policy_noise"],
+    noise_clip=cfg["noise_clip"],
+    policy_freq=cfg["policy_freq"]
+    )
     
     # Trainer (from previous TD3Trainer class)
     trainer = TD3Trainer(actor, critic, gamma=cfg.gamma, tau=cfg.tau,
