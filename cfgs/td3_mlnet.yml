@@ -1,15 +1,46 @@
-gamma: 0.99          # Discount factor
-tau: 0.005           # Target network update rate
-actor_lr: 1e-4       # Actor learning rate
-critic_lr: 1e-3      # Critic learning rate
-policy_noise: 0.2    # Target action noise
-noise_clip: 0.5      # Noise clipping range
-policy_freq: 2       # Delayed policy update frequency
-buffer_size: 1000000  # Default size for TD3
-exploration_noise: 0.1  # Standard exploration noise for TD3
-replay_size: 1000000  # Needed for GPU replay buffer
-saliency: "MLNet"  # ✅ Or "TASED-Net" if using that model
-input_shape: [480, 640]
-len_clip: 32
+# === ENVIRONMENT PARAMETERS ===
+data_path: ./data/DADA-2000-small
+batch_size: 5
 image_shape: [330, 792]
+input_shape: [480, 640]
+data_aug: true
 frame_interval: 5
+step_size: 1
+len_clip: 32
+rho: 0.97
+fusion: "static"  # "static" or "dynamic"
+fusion_margin: 0.5
+score_thresh: 0.5
+use_salmap: false
+state_norm: true
+saliency: "MLNet"
+env_model: ./models/saliency/mlnet_25.pth  # Path to MLNet model
+
+# === TD3 PARAMETERS ===
+gamma: 0.99
+tau: 0.005
+actor_lr: 1e-4
+critic_lr: 1e-3
+policy_noise: 0.2
+noise_clip: 0.5
+policy_freq: 2
+buffer_size: 1000000
+exploration_noise: 0.1
+replay_size: 1000000
+gpu_replay: true
+
+# === NETWORK PARAMETERS ===
+num_classes: 2
+hidden_size: 64
+dim_state: 128
+dim_action: 3  # [accident_score, x, y]
+actor_update_interval: 2
+target_update_interval: 1
+beta_accident: 1.0
+beta_fixation: 10.0
+updates_per_step: 4
+logging_interval: 100
+weight_decay: 0.00001
+arch_type: "rae"  # "mlp" or "rae"
+dim_latent: 64  # Only useful if `rae` is used
+latent_lambda: 0.0001
