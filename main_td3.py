@@ -44,7 +44,7 @@ def train_td3(cfg):
     #                     policy_noise=0.2, noise_clip=0.5, policy_freq=2)
     
     # Training loop
-    for episode in range(cfg[['epochs']]):
+    for episode in range(cfg['epochs']):
         video_data, coord_data, data_info = dataset.sample_batch(cfg['batch_size'])
         state = env.set_data(video_data, coord_data, data_info)
         

@@ -28,6 +28,7 @@ buffer_size: 1000000
 exploration_noise: 0.1
 replay_size: 1000000
 gpu_replay: true
+epochs: 50 
 
 # === NETWORK PARAMETERS ===
 num_classes: 2
