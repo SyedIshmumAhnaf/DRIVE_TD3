@@ -17,7 +17,7 @@ def train_td3(cfg):
     #env = DashCamEnv(cfg)
     env = DashCamEnv(cfg, device)
     #dataset = DADALoader(cfg.data_root, cfg.mode, cfg.frame_interval)
-    dataset = DADALoader(cfg["data_root"], cfg["mode"], cfg["frame_interval"])
+    dataset = DADALoader(cfg["data_path"], cfg["mode"], cfg["frame_interval"])
 
     
     # TD3 components
@@ -45,7 +45,11 @@ def train_td3(cfg):
     
     # Training loop
     for episode in range(cfg['epochs']):
-        video_data, coord_data, data_info = dataset.sample_batch(cfg['batch_size'])
+        #video_data, coord_data, data_info = dataset.sample_batch(cfg['batch_size'])
+        dataloader = dataset.setup_dataloader(cfg)  # ✅ Get the data loader
+        for batch in dataloader:
+            video_data, coord_data, data_info = batch  # ✅ Extract batch
+            break  # ✅ Only take one batch per episode
         state = env.set_data(video_data, coord_data, data_info)
         
         for step in range(env.max_steps):
