@@ -1,0 +1,7 @@
+gamma: 0.99          # Discount factor
+tau: 0.005           # Target network update rate
+actor_lr: 1e-4       # Actor learning rate
+critic_lr: 1e-3      # Critic learning rate
+policy_noise: 0.2    # Target action noise
+noise_clip: 0.5      # Noise clipping range
+policy_freq: 2       # Delayed policy update frequency
