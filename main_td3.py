@@ -26,8 +26,8 @@ def train_td3(cfg):
     actor = DeterministicActor(state_dim, action_dim).to(device)
     critic = TwinCritic(state_dim, action_dim).to(device)
     #replay_buffer = ReplayMemory(cfg.buffer_size)
-    #replay_buffer = ReplayMemoryGPU(cfg, device=device)
-    replay_buffer = ReplayMemoryGPU(cfg["replay_size"], device=device)
+    replay_buffer = ReplayMemoryGPU(cfg, device=device)
+    #replay_buffer = ReplayMemoryGPU(replay_size=cfg["replay_size"], device=device)
 
     trainer = TD3Trainer(
     actor=actor.to(device), 
@@ -60,7 +60,7 @@ def train_td3(cfg):
             next_state, reward, _ = env.step(action)
             done = (step == env.max_steps - 1)
             
-            # Store transition
+            # Store transitiong
             replay_buffer.add(
                 state.to(device),
                 action.to(device),
