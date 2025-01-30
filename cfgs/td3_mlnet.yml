@@ -11,3 +11,4 @@ replay_size: 1000000  # Needed for GPU replay buffer
 saliency: "MLNet"  # ✅ Or "TASED-Net" if using that model
 input_shape: [480, 640]
 len_clip: 32
+image_shape: [330, 792]  # ✅ Add this if missing
