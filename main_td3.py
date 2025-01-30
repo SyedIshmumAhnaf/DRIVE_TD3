@@ -6,6 +6,7 @@ from src.DADALoader import DADALoader
 from RLlib.replay_buffer import ReplayMemory, ReplayMemoryGPU  # Reuse existing buffer
 from trainers.td3_trainer import TD3Trainer
 import yaml
+from src.DADALoader import setup_dataloader
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -46,7 +47,7 @@ def train_td3(cfg):
     # Training loop
     for episode in range(cfg['epochs']):
         #video_data, coord_data, data_info = dataset.sample_batch(cfg['batch_size'])
-        dataloader = dataset.setup_dataloader(cfg)  # ✅ Get the data loader
+        dataloader = setup_dataloader(cfg)  # ✅ Get the data loader
         for batch in dataloader:
             video_data, coord_data, data_info = batch  # ✅ Extract batch
             break  # ✅ Only take one batch per episode
