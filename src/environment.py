@@ -14,26 +14,28 @@ import time
 class DashCamEnv(core.Env):
     def __init__(self, cfg, device=torch.device("cuda")):
         self.device = device
-        self.saliency = cfg.saliency
+        #self.saliency = cfg.saliency
+        self.saliency = cfg["saliency"]
         if self.saliency == 'MLNet':
-            self.observe_model = MLNet(cfg.input_shape)
+            self.observe_model = MLNet(cfg["input_shape"])
         elif self.saliency == 'TASED-Net':
-            self.observe_model = TASED_v2(cfg.input_shape)
+            self.observe_model = TASED_v2(cfg["input_shape"])
         else:
             raise NotImplementedError
         self.output_shape = self.observe_model.output_shape  # (60, 80)
-        self.foveal_model = TorchFovea(cfg.input_shape, min(cfg.input_shape)/6.0, level=5, factor=2, device=device)
-        self.len_clip = cfg.len_clip
-        self.input_size = cfg.input_shape  # (480, 640)
-        self.image_size = cfg.image_shape  # (330, 792)
-        self.fps = 30 / cfg.frame_interval
-        self.step_size = cfg.step_size
-        self.score_thresh = cfg.score_thresh
-        self.state_norm = cfg.state_norm
-        self.fusion = cfg.fusion
-        self.fusion_margin = cfg.fusion_margin
-        self.rho = cfg.rho
-        self.use_salmap = cfg.use_salmap
+        self.foveal_model = TorchFovea(cfg["input_shape"], min(cfg["input_shape"])/6.0, level=5, factor=2, device=device)
+        self.len_clip = cfg["len_clip"]
+        self.input_size = cfg["input_shape"]  # (480, 640)
+        self.image_size = cfg["image_shape"]  # (330, 792)
+        self.fps = 30 / cfg["frame_interval"]
+        self.step_size = cfg["step_size"]
+        self.score_thresh = cfg["score_thresh"]
+        self.state_norm = cfg["state_norm"]
+        self.fusion = cfg["fusion"]
+        self.fusion_margin = cfg["fusion_margin"]
+        self.rho = cfg["rho"]
+        self.use_salmap = cfg["use_salmap"]
+
 
 
     def set_model(self, pretrained=False, weight_file=None):

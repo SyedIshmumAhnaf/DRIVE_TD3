@@ -12,7 +12,8 @@ with open("cfgs/td3_mlnet.yml", "r") as f:
 
 def train_td3(cfg):
     # Initialize environment and dataset
-    env = DashCamEnv(cfg)
+    #env = DashCamEnv(cfg)
+    env = DashCamEnv(cfg, device)
     dataset = DADALoader(cfg.data_root, cfg.mode, cfg.frame_interval)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     
