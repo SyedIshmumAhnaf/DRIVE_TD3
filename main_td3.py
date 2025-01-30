@@ -1,10 +1,10 @@
 import torch
 import numpy as np
-from td3_agent import DeterministicActor, TwinCritic
+from RLlib.td3_agent import DeterministicActor, TwinCritic
 from src.environment import DashCamEnv
 from src.DADALoader import DADALoader
-from utils.replay_buffer import ReplayBuffer  # Reuse existing buffer
-from td3_trainer import TD3Trainer
+from RLlib.replay_buffer import ReplayBuffer  # Reuse existing buffer
+from trainers.td3_trainer import TD3Trainer
 
 trainer = TD3Trainer(
     actor=actor, 
