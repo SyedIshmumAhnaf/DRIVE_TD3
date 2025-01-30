@@ -9,3 +9,5 @@ buffer_size: 1000000  # Default size for TD3
 exploration_noise: 0.1  # Standard exploration noise for TD3
 replay_size: 1000000  # Needed for GPU replay buffer
 saliency: "MLNet"  # ✅ Or "TASED-Net" if using that model
+input_shape: [480, 640]  # ✅ Add this
+
