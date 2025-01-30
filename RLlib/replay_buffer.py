@@ -30,9 +30,9 @@ class ReplayMemory:
 
 class ReplayMemoryGPU:
     def __init__(self, cfg, device):
-        self.capacity = cfg.replay_size
+        self.capacity = cfg['replay_size']
         self.device = device
-        self.dim_state = cfg.dim_state  # 128
+        self.dim_state = cfg['dim_state']  # 128
         self.dim_action = 3  # [accident_score, x, y]
         self.dim_mem = self.dim_state + self.dim_action + 1 + self.dim_state + 1  # state + action + reward + next_state + done
         self.buffer = torch.zeros((self.capacity, self.dim_mem), device=device)
