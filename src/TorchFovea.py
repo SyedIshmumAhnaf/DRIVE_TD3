@@ -41,7 +41,7 @@ class TorchFovea(torch.nn.Module):
         # create kernel pyramid
         kernels = [self.createFilter(m, n)]
         for i in range(self.level):
-            kernel_down = PyrDown()(kernels[i].unsqueeze(0).unsqueeze(0))  # ✅ Fix: Ensure `()` is called correctly
+            kernel_down = K.pyrdown(kernels[i].unsqueeze(0).unsqueeze(0))  # ✅ Fix: Ensure `()` is called correctly
             kernel_down = kernel_down.squeeze(0).squeeze(0)
             kernels.append(kernel_down)
         return kernels
