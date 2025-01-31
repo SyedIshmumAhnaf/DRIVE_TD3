@@ -303,6 +303,7 @@ class PreFetcher():
 
 
 def setup_dataloader(cfg):
+    from src.data_transform import ProcessImages, ProcessFixations
     transform_dict = {'image': transforms.Compose([ProcessImages(cfg.input_shape)]),
                       'focus': transforms.Compose([ProcessImages(cfg.output_shape)]), 
                       'fixpt': transforms.Compose([ProcessFixations(cfg.input_shape, cfg.image_shape)])}
@@ -321,7 +322,7 @@ def setup_dataloader(cfg):
      
 if __name__ == '__main__':
     from torch.utils.data import DataLoader
-    from .data_transform import ProcessImages, ProcessFixations
+    from src.data_transform import ProcessImages, ProcessFixations
     import argparse, time
     from tqdm import tqdm
     import matplotlib.pyplot as plt
