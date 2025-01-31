@@ -47,3 +47,5 @@ arch_type: "rae"  # "mlp" or "rae"
 dim_latent: 64  # Only useful if `rae` is used
 latent_lambda: 0.0001
 mode: "training"  # ✅ Add this if missing ("training", "testing", or "validation")
+binary_cls: true
+num_workers: 4

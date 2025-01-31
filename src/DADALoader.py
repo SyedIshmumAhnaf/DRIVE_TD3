@@ -309,13 +309,13 @@ def setup_dataloader(cfg):
                       'fixpt': transforms.Compose([ProcessFixations(cfg['input_shape'], cfg['image_shape'])])}
     params_norm = {'mean': [0.485, 0.456, 0.406], 'std': [0.229, 0.224, 0.225]}
     # training dataset
-    train_data = DADALoader(cfg.data_path, 'training', interval=cfg.frame_interval, max_frames=cfg.max_frames, 
-                            transforms=transform_dict, params_norm=params_norm, binary_cls=cfg.binary_cls, use_salmap=cfg.use_salmap)
-    traindata_loader = DataLoader(dataset=train_data, batch_size=cfg.batch_size, shuffle=True, num_workers=cfg.num_workers)
+    train_data = DADALoader(cfg['data_path'], 'training', interval=cfg['frame_interval'], max_frames=cfg['max_frames'], 
+                            transforms=transform_dict, params_norm=params_norm, binary_cls=cfg['binary_cls'], use_salmap=cfg['use_salmap'])
+    traindata_loader = DataLoader(dataset=train_data, batch_size=cfg['batch_size'], shuffle=True, num_workers=cfg['num_workers'])
     # validataion dataset
-    eval_data = DADALoader(cfg.data_path, 'validation', interval=cfg.frame_interval, max_frames=cfg.max_frames, 
+    eval_data = DADALoader(cfg['data_path'], 'validation', interval=cfg['frame_interval'], max_frames=cfg['max_frames'], 
                             transforms=transform_dict, params_norm=params_norm, binary_cls=cfg.binary_cls, use_salmap=cfg.use_salmap)
-    evaldata_loader = DataLoader(dataset=eval_data, batch_size=cfg.batch_size, shuffle=False, num_workers=cfg.num_workers)
+    evaldata_loader = DataLoader(dataset=eval_data, batch_size=cfg['batch_size'], shuffle=False, num_workers=cfg['num_workers'])
     print("# train set: %d, eval set: %d"%(len(train_data), len(eval_data)))
     return traindata_loader, evaldata_loader
 
