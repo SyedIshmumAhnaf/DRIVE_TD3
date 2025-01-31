@@ -5,6 +5,7 @@ import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
 from torch.utils.data import DataLoader 
+import torch.nn.utils.rnn as rnn_utils
 
 class DADALoader(Dataset):
     def __init__(self, root_path, phase, interval=1, max_frames=-1, 
@@ -305,8 +306,12 @@ class PreFetcher():
 def custom_collate_fn(batch):
     #print("Batch structure:", batch)
     video_data, coord_data, data_info, *_ = zip(*batch)
+
+    video_data = [torch.as_tensor(v) for v in video_data]
+    video_data_padded = rnn_utils.pad_sequence(video_data, batch_first=True, padding_value=0)
+
     return (
-        torch.stack([torch.as_tensor(v) for v in video_data]), 
+        video_data_padded,
         torch.stack([torch.as_tensor(c) for c in coord_data]), 
         torch.stack([torch.as_tensor(d) for d in data_info])
     )
