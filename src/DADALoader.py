@@ -315,7 +315,7 @@ def setup_dataloader(cfg):
     traindata_loader = DataLoader(dataset=train_data, batch_size=cfg['batch_size'], shuffle=True, num_workers=cfg['num_workers'])
     # validataion dataset
     eval_data = DADALoader(cfg['data_path'], 'validation', interval=cfg['frame_interval'], max_frames=cfg['max_frames'], 
-                            transforms=transform_dict, params_norm=params_norm, binary_cls=cfg.binary_cls, use_salmap=cfg.use_salmap)
+                            transforms=transform_dict, params_norm=params_norm, binary_cls=cfg['binary_cls'], use_salmap=cfg['use_salmap'])
     evaldata_loader = DataLoader(dataset=eval_data, batch_size=cfg['batch_size'], shuffle=False, num_workers=cfg['num_workers'])
     print("# train set: %d, eval set: %d"%(len(train_data), len(eval_data)))
     return traindata_loader, evaldata_loader
