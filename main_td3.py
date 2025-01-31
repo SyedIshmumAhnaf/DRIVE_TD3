@@ -49,7 +49,7 @@ def train_td3(cfg):
         #video_data, coord_data, data_info = dataset.sample_batch(cfg['batch_size'])
         dataloader = setup_dataloader(cfg)  # ✅ Get the data loader
         for batch in dataloader:
-            video_data, coord_data, data_info = batch  # ✅ Extract batch
+            video_data, coord_data, data_info, *_ = batch
             break  # ✅ Only take one batch per episode
         state = env.set_data(video_data, coord_data, data_info)
         
