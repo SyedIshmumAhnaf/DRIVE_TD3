@@ -302,6 +302,13 @@ class PreFetcher():
         self.preload()
         return next_video_data, next_focus_data, next_coord_data
 
+def custom_collate_fn(batch):
+    video_data, coord_data, data_info = zip(*batch)
+    return (
+        torch.stack([torch.as_tensor(v) for v in video_data]), 
+        torch.stack([torch.as_tensor(c) for c in coord_data]), 
+        torch.stack([torch.as_tensor(d) for d in data_info])
+    )
 
 def setup_dataloader(cfg):
     from src.data_transform import ProcessImages, ProcessFixations
@@ -312,7 +319,7 @@ def setup_dataloader(cfg):
     # training dataset
     train_data = DADALoader(cfg['data_path'], 'training', interval=cfg['frame_interval'], max_frames=cfg['max_frames'], 
                             transforms=transform_dict, params_norm=params_norm, binary_cls=cfg['binary_cls'], use_salmap=cfg['use_salmap'])
-    traindata_loader = DataLoader(dataset=train_data, batch_size=cfg['batch_size'], shuffle=True, num_workers=cfg['num_workers'])
+    traindata_loader = DataLoader(dataset=train_data, batch_size=cfg['batch_size'], shuffle=True, num_workers=cfg['num_workers'], collate_fn=custom_collate_fn)
     # validataion dataset
     eval_data = DADALoader(cfg['data_path'], 'validation', interval=cfg['frame_interval'], max_frames=cfg['max_frames'], 
                             transforms=transform_dict, params_norm=params_norm, binary_cls=cfg['binary_cls'], use_salmap=cfg['use_salmap'])
