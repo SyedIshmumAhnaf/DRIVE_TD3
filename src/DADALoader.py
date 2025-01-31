@@ -304,9 +304,9 @@ class PreFetcher():
 
 def setup_dataloader(cfg):
     from src.data_transform import ProcessImages, ProcessFixations
-    transform_dict = {'image': transforms.Compose([ProcessImages(cfg.input_shape)]),
-                      'focus': transforms.Compose([ProcessImages(cfg.output_shape)]), 
-                      'fixpt': transforms.Compose([ProcessFixations(cfg.input_shape, cfg.image_shape)])}
+    transform_dict = {'image': transforms.Compose([ProcessImages(cfg['input_shape'])]),
+                      'focus': transforms.Compose([ProcessImages(cfg['output_shape'])]), 
+                      'fixpt': transforms.Compose([ProcessFixations(cfg['input_shape'], cfg['image_shape'])])}
     params_norm = {'mean': [0.485, 0.456, 0.406], 'std': [0.229, 0.224, 0.225]}
     # training dataset
     train_data = DADALoader(cfg.data_path, 'training', interval=cfg.frame_interval, max_frames=cfg.max_frames, 
