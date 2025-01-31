@@ -310,11 +310,13 @@ def custom_collate_fn(batch):
     video_data = [torch.as_tensor(v) for v in video_data]
     video_data_padded = rnn_utils.pad_sequence(video_data, batch_first=True, padding_value=0)
 
-    return (
-        video_data_padded,
-        torch.stack([torch.as_tensor(c) for c in coord_data]), 
-        torch.stack([torch.as_tensor(d) for d in data_info])
-    )
+    coord_data = [torch.as_tensor(c) for c in coord_data]
+    coord_data_padded = rnn_utils.pad_sequence(coord_data, batch_first=True, padding_value=0)
+
+    data_info = [torch.as_tensor(d) for d in data_info]  # ✅ Ensure tensors are created
+    data_info_padded = rnn_utils.pad_sequence(data_info, batch_first=True, padding_value=0)  # ✅ Pad sequences
+
+    return video_data_padded, coord_data_padded, data_info_padded
 
 def setup_dataloader(cfg):
     from src.data_transform import ProcessImages, ProcessFixations
