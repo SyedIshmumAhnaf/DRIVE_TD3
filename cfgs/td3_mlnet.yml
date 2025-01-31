@@ -49,3 +49,4 @@ latent_lambda: 0.0001
 mode: "training"  # ✅ Add this if missing ("training", "testing", or "validation")
 binary_cls: true
 num_workers: 4
+max_frames: -1
