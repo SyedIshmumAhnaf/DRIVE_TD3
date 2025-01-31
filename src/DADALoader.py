@@ -303,6 +303,7 @@ class PreFetcher():
         return next_video_data, next_focus_data, next_coord_data
 
 def custom_collate_fn(batch):
+    print("Batch structure:", batch)
     video_data, coord_data, data_info = zip(*batch)
     return (
         torch.stack([torch.as_tensor(v) for v in video_data]), 
