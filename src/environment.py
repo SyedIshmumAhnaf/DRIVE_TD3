@@ -12,14 +12,18 @@ import time
 
 
 class DashCamEnv(core.Env):
-    def __init__(self, cfg, device=torch.device("cuda")):
+    def __init__(self, cfg, device=torch.device("cuda"), observe_model=None):
         self.device = device
         #self.saliency = cfg.saliency
         self.saliency = cfg["saliency"]
+        self.observe_model = observe_model
+        
         if self.saliency == 'MLNet':
-            self.observe_model = MLNet(cfg["input_shape"])
+            if observe_model is None:
+                self.observe_model = MLNet(cfg["input_shape"]).to(device)
         elif self.saliency == 'TASED-Net':
-            self.observe_model = TASED_v2(cfg["input_shape"])
+            if observe_model is None:
+                self.observe_model = TASED_v2(cfg["input_shape"]).to(device)
         else:
             raise NotImplementedError
         self.output_shape = self.observe_model.output_shape  # (60, 80)
@@ -36,36 +40,8 @@ class DashCamEnv(core.Env):
         self.rho = cfg["rho"]
         self.use_salmap = cfg["use_salmap"]
 
-
-
     def set_model(self, pretrained=False, weight_file=None):
-        if pretrained and weight_file is not None:
-            # load model weight file
-            assert os.path.exists(weight_file), "Checkpoint directory does not exist! %s"%(weight_file)
-            ckpt = torch.load(weight_file)
-            if self.saliency == 'MLNet':
-                self.observe_model.load_state_dict(ckpt['model'])
-            elif self.saliency == 'TASED-Net':
-                model_dict = self.observe_model.state_dict()
-                for name, param in ckpt.items():
-                    if 'module' in name:
-                        name = '.'.join(name.split('.')[1:])
-                    if name in model_dict:
-                        if param.size() == model_dict[name].size():
-                            model_dict[name].copy_(param)
-                        else:
-                            print (' size? ' + name, param.size(), model_dict[name].size())
-                    else:
-                        print (' name? ' + name)
-                self.observe_model.load_state_dict(model_dict)
-            else:
-                raise NotImplementedError
-            self.observe_model.to(self.device)
-            self.observe_model.eval()
-        else:
-            self.observe_model.to(self.device)
-            self.observe_model.train()
-
+        pass 
 
     def set_data(self, video_data, coord_data, data_info):
         """ video data: (B, T, C, H, W)
@@ -208,27 +184,27 @@ class DashCamEnv(core.Env):
         """
         batch_size = actions.size(0)
         # parse actions (current accident scores, the next attention mask)
-        score_pred = 0.5 * (actions[:, 0] + 1.0)  # map to [0, 1], shape=(B,)
-        fix_pred = scales_to_point(actions[:, 1:], self.image_size, self.input_size)  # (B, 2)  (x,y)
-
+        score_pred = torch.sigmoid(actions[:, 0]) # map to [0, 1], shape=(B,)
+        fix_pred = torch.tanh(actions[:, 1:]) # (B, 2) (x,y)
+        fix_pred = scales_to_point(fix_pred, self.image_size, self.input_size)  # (B, 2) (x,y)
         # update rho (dynamic)
         if self.fusion == 'dynamic':
             self.rho = torch.clamp_max(score_pred.clone(), self.fusion_margin)  # (B,)
-
+        
         info = {}
         if not isTraining:
             info.update({'pred_score': score_pred, 'pred_fixation': fix_pred})
 
-        if self.cur_step < self.max_steps - 1:  # cur_step starts from 0
+        if self.cur_step < self.max_steps - 1: # cur_step starts from 0
             # next state
             next_state = self.get_next_state(fix_pred, self.cur_step + 1)
             # reward (immediate)
             cur_rewards = self.get_reward(score_pred, fix_pred) if isTraining else 0
         else:
             # The last step
-            next_state = self.cur_state.clone()  # GPU array
+            next_state = self.cur_state.clone() # GPU array
             cur_rewards = torch.zeros([batch_size, 1], dtype=torch.float32).to(self.device) if isTraining else 0
-
+        
         self.cur_step += 1
         self.cur_state = next_state.clone()
 

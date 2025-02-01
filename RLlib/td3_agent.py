@@ -9,15 +9,12 @@ class DeterministicActor(nn.Module):
         self.fc1 = nn.Linear(state_dim, hidden_dim)
         self.fc2 = nn.Linear(hidden_dim, hidden_dim)
         self.action_head = nn.Linear(hidden_dim, action_dim)
-        
+
     def forward(self, state):
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
-        actions = self.action_head(x)
-        # Accident score: [0, 1] via sigmoid | Fixation: [-1, 1] via tanh
-        accident_score = torch.sigmoid(actions[:, 0].unsqueeze(1))  # (B, 1)
-        fixation = torch.tanh(actions[:, 1:])                       # (B, 2)
-        return torch.cat([accident_score, fixation], dim=1)
+        actions = self.action_head(x)  # Remove sigmoid and tanh from here
+        return actions
 
 class TwinCritic(nn.Module):
     """TD3 Twin Q-Networks"""

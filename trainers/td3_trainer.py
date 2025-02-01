@@ -60,9 +60,10 @@ class TD3Trainer:
         # Optimize critics
         self.critic_optimizer.zero_grad()
         critic_loss.backward()
-        torch.nn.utils.clip_grad_norm_(self.critic.parameters(), 1.0)  # Gradient clipping
+        torch.nn.utils.clip_grad_norm_(self.critic.parameters(), 1.0)
         self.critic_optimizer.step()
         
+        actor_loss = 0.0
         # Delayed policy updates
         if self.total_steps % self.policy_freq == 0:
             # Actor loss (maximize Q1)
@@ -75,13 +76,12 @@ class TD3Trainer:
             self.actor_optimizer.step()
             
             # Update target networks
-            self._soft_update(self.actor_target, self.actor)
-            self._soft_update(self.critic_target, self.critic)
-        
+            self._soft_update(self.actor_target, self.actor, tau=self.tau)
+            self._soft_update(self.critic_target, self.critic, tau=self.tau)
         self.total_steps += 1
-        return critic_loss.item(), actor_loss.item() if (self.total_steps % self.policy_freq == 0) else 0.0
+        return critic_loss.item(), actor_loss
 
-    def _soft_update(self, target, source):
+    def _soft_update(self, target, source, tau=0.005):
         """Soft update target networks"""
         for target_param, param in zip(target.parameters(), source.parameters()):
             target_param.data.copy_(self.tau * param.data + (1.0 - self.tau) * target_param.data)
