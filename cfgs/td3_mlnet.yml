@@ -50,6 +50,3 @@ mode: "training"  # ✅ Add this if missing ("training", "testing", or "validati
 binary_cls: true
 num_workers: 1
 max_frames: -1
-
-Note to self: Last known problem is that we are using CPU, not GPU
-Use gitingest to provide entire code to gpt and check where the issue might be
